@@ -7,6 +7,7 @@
 # Skip compiler self-tests (saves time, avoids errors with some cross compilers)
 set(CMAKE_C_COMPILER_WORKS 1)
 set(CMAKE_CXX_COMPILER_WORKS 1)
+set(CMAKE_TRY_COMPILE_TARGET_TYPE STATIC_LIBRARY)
 
 # Minimum required CMake version
 cmake_minimum_required(VERSION 3.22.1)
@@ -61,10 +62,15 @@ add_executable(uiaos-kernel
 	src/multiboot2.asm # TODO: Add multiboot2 support
     src/kernel.c
 	src/kernel.cpp
+	../isr/isr.c
+	../isr/isr.asm
 )
 
 # Include directories for the kernel target
-target_include_directories(uiaos-kernel PUBLIC include)
+target_include_directories(uiaos-kernel PUBLIC
+	include
+	${CMAKE_CURRENT_SOURCE_DIR}/../isr
+)
 
 
 # Specify compile options for C and C++

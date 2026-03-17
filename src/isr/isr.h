@@ -1,15 +1,27 @@
 #ifndef ISR_H
 #define ISR_H
 
-#include "idt.h"
+#ifdef __cplusplus
+extern "C" {
+#endif
+//setter opp idt, registrerer isr-funksjonen og konfigurerer cpu-interrupts
 
-struct interrupt_frame;
+void isr_initialize(void);
 
-__attribute__((interrupt)) void interrupt_handler(struct interrupt_frame* frame);
+//kalt fra assembly
 
-__attribute__((interrupt)) void isr0(struct interrupt_frame* frame); //divide by zero
-__attribute__((interrupt)) void isr1(struct interrupt_frame* frame); //debug interrupt
-__attribute__((interrupt)) void isr14(struct interrupt_frame* frame); //page fault
+void isr0(void);
+void isr1(void);
+void isr14(void);
+//funksjonene som håndterer errors
+
+void isr0_handler(void);
+void isr1_handler(void);
+void isr14_handler(void);
+
+#ifdef __cplusplus
+}
+#endif
 
 
 #endif
