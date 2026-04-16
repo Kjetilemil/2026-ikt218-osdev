@@ -26,6 +26,8 @@ typedef struct {
 SongPlayer* create_song_player();
 void play_song_impl(Song *song) ;
 
+Song* notes_to_song(Note* notes_arr[], uint32_t notes_arr_size);
+
 static Note music_1[] = {
     {E5, 250}, {R, 125}, {E5, 125}, {R, 125}, {E5, 125}, {R, 125},
     {C5, 125}, {E5, 125}, {G5, 125}, {R, 125}, {G4, 125}, {R, 250},

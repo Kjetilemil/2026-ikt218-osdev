@@ -130,5 +130,10 @@ int main(uint32_t myStruct, uint32_t magic, struct multiboot_info* mb_info_addr)
 
     halt_forever();
 
+    //Free memory before exiting
+    free(some_memory);
+    free(memory2);
+    free(memory3);
+
     return 0;
 }
