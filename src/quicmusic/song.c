@@ -57,7 +57,7 @@ void play_song(Song* song) {
 }
 
 //Plays all songs
-void play_music() {
+/*void play_music() {
     // How to play music
     Song songs[] = {
         {music_1, sizeof(music_1) / sizeof(Note)}
@@ -73,4 +73,4 @@ void play_music() {
             printf("Finished playing the song.\n");
         }
     }
-}
+}*/
