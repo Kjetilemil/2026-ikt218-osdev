@@ -12,6 +12,9 @@
 #include "pit.h"
 #include "libc/string.h"
 
+#include "../quicmusic/song.h"
+#include "../quicmusic/frequencies.h"
+
 extern uint32_t end;
 
 
@@ -123,8 +126,31 @@ int main(uint32_t myStruct, uint32_t magic, struct multiboot_info* mb_info_addr)
     sleep_interrupt(SCREEN_PAUSE_MS);
     wait_for_user_next_screen();
 
-    printf("PIT timing test complete. System halted for inspection.\n");
+    printf("PIT timing test complete. Playing sound test....\n");
+
+    printf("Enabling speaker\n");
+    enable_speaker();
+
+    printf("Playing note A6 for 1000 ms...\n");
+    play_sound(A6);
+    sleep_interrupt(1000);
+
+    printf("Playing music_1...\n");
+
+    Song* song = malloc(sizeof(Song));
+    song->notes = music_1;
+    song->length = sizeof(music_1) / sizeof(Note);
+    play_song(song);
+
+    printf("Disabling speaker\n");
+    disable_speaker();
+
     halt_forever();
+
+    //Free memory before exiting
+    free(some_memory);
+    free(memory2);
+    free(memory3);
 
     return 0;
 }
