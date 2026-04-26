@@ -33,6 +33,7 @@ static volatile uint16_t* const vga_buffer = (volatile uint16_t*)0xB8000;
 static size_t cursor_row = 0;
 static size_t cursor_column = 0;
 static bool console_ready = false;
+static volatile int32_t last_triggered_vector = -1;
 
 void idt_set_gate(uint8_t vector, void (*handler)(void)) {
     uint32_t handler_address = (uint32_t)handler;
@@ -122,28 +123,23 @@ static void console_write(const char* message) {
 // Vi stopper CPU-en etter en alvorlig exception for å unngå videre skade.
 
 void isr0_handler(void) {
+    last_triggered_vector = 0;
     console_initialize();
     console_write("ISR 0 triggered: divide-by-zero\n");
-
-    while (1) {
-        asm volatile("hlt");
-    }
 }
 
 void isr1_handler(void) {
+    last_triggered_vector = 1;
     console_initialize();
     console_write("ISR 1 triggered: debug interrupt\n");
-
-    while (1) {
-        asm volatile("hlt");
-    }
 }
 
 void isr14_handler(void) {
+    last_triggered_vector = 14;
     console_initialize();
     console_write("ISR 14 triggered: page fault interrupt\n");
+}
 
-    while (1) {
-        asm volatile("hlt");
-    }
+int32_t isr_get_last_triggered_vector(void) {
+    return last_triggered_vector;
 }

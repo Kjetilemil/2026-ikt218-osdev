@@ -85,7 +85,7 @@ static const char scancode_set1_ascii_shift[128] = {
     [0x39] = ' '
 };
 
-static void keyboard_buffer_push(uint8_t scancode) {
+static void keyboard_scancode_buffer_push(uint8_t scancode) {
     keyboard_scancode_buffer[keyboard_scancode_head] = scancode;
     keyboard_scancode_head = (keyboard_scancode_head + 1) % KEYBOARD_SCANCODE_BUFFER_SIZE;
 
@@ -93,6 +93,20 @@ static void keyboard_buffer_push(uint8_t scancode) {
     if (keyboard_scancode_head == keyboard_scancode_tail) {
         keyboard_scancode_tail = (keyboard_scancode_tail + 1) % KEYBOARD_SCANCODE_BUFFER_SIZE;
     }
+}
+
+bool irq_try_read_scancode(uint8_t* out_scancode) {
+    if (out_scancode == 0) {
+        return false;
+    }
+
+    if (keyboard_scancode_head == keyboard_scancode_tail) {
+        return false;
+    }
+
+    *out_scancode = keyboard_scancode_buffer[keyboard_scancode_tail];
+    keyboard_scancode_tail = (keyboard_scancode_tail + 1) % KEYBOARD_SCANCODE_BUFFER_SIZE;
+    return true;
 }
 
 static void keyboard_console_advance_line(void) {
@@ -223,7 +237,6 @@ void irq0_handler(void) {
 void irq1_handler(void) {
     uint8_t scancode = inb(KEYBOARD_DATA);
     ++keyboard_event_count;
-    keyboard_buffer_push(scancode);
 
     if (scancode == LEFT_SHIFT_PRESS || scancode == RIGHT_SHIFT_PRESS) {
         keyboard_shift_active = true;
@@ -241,6 +254,7 @@ void irq1_handler(void) {
     if ((scancode & KEY_RELEASE_MASK) == 0) {
         char character = keyboard_translate_scancode(scancode);
         if (character != 0) {
+            keyboard_scancode_buffer_push(scancode);
             keyboard_console_putc(character);
         }
     }

@@ -6,6 +6,7 @@ extern "C" {
 #endif
 
 #include "libc/stdint.h"
+#include "libc/stdbool.h"
 
 // Setter opp PIC remap og kobler IRQ-rutiner i IDT.
 void irq_initialize(void);
@@ -33,6 +34,7 @@ void irq0_handler(void);   // Timer
 void irq1_handler(void);   // Keyboard
 void irq_dispatcher(uint8_t irq);
 uint32_t irq_get_keyboard_event_count(void);
+bool irq_try_read_scancode(uint8_t* out_scancode); // returnerer true hvis vi klarte å lese en scancode, false hvis det ikke var noe å lese eller out_scancode var null
 
 #ifdef __cplusplus
 }

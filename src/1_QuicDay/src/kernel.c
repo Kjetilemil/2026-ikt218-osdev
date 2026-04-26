@@ -35,7 +35,7 @@ enum {
 static void wait_for_user_next_screen(void) {
     uint32_t start_events = irq_get_keyboard_event_count();
     printf("\nPress any key to continue...\n");
-    while (irq_get_keyboard_event_count() == start_events) {
+    while ((irq_get_keyboard_event_count() - start_events) < 2) {
         asm volatile("sti; hlt");
     }
 }
@@ -69,15 +69,63 @@ void assignment_2() {
     print_string("Hello World", 0x0F);
 }
 
-// assignment 3 (usikker på om jeg har fått denne riktig)
+// assignment 3
 void assignment_3() {
-    wait_for_user_next_screen();
-    asm volatile("int $0x3");
-    wait_for_user_next_screen();
-    asm volatile("int $0x4");
-    wait_for_user_next_screen();
-    asm volatile("int $0x0"); 
-    wait_for_user_next_screen();
+    int32_t last_result = -1;
+
+    while (1) {
+        int choice = 0;
+
+        clear_screen();
+        printf("==============================\n");
+        printf("      Interrupts Test Menu    \n");
+        printf("==============================\n\n");
+
+        if (last_result >= 0) {
+            printf("Last result: ISR %d was triggered\n\n", last_result);
+        }
+
+        printf("1. Trigger ISR0  (divide by zero)\n");
+        printf("2. Trigger ISR1  (debug interrupt)\n");
+        printf("3. Trigger ISR14 (page fault test)\n");
+
+        while (1) {
+            if (inb(0x64) & 0x01) {
+                uint8_t scancode = inb(0x60);
+                if (scancode >= 0x02 && scancode <= 0x05) {
+                    choice = scancode - 0x01;
+                    break;
+                }
+            }
+        }
+
+        switch (choice) {
+            case 1:
+                clear_screen();
+                printf("Running interrupt test: ISR 0\n\n");
+                asm volatile("int $0x0");
+                last_result = isr_get_last_triggered_vector();
+                printf("Result: ISR %d was triggered.\n", last_result);
+                wait_for_user_next_screen();
+                break;
+            case 2:
+                clear_screen();
+                printf("Running interrupt test: ISR 1\n\n");
+                asm volatile("int $0x1");
+                last_result = isr_get_last_triggered_vector();
+                printf("Result: ISR %d was triggered.\n", last_result);
+                wait_for_user_next_screen();
+                break;
+            case 3:
+                clear_screen();
+                printf("Running interrupt test: ISR 14\n\n");
+                asm volatile("int $0x14");
+                last_result = isr_get_last_triggered_vector();
+                printf("Result: ISR %d was triggered.\n", last_result);
+                wait_for_user_next_screen();
+                break;
+        }
+    }
 }
 
 // assignment 4

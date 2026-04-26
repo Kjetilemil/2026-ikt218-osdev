@@ -18,6 +18,16 @@ static void console_advance_line(void) {
         cursor_row = 0;
     }
 }
+void clear_screen(void) {
+    for (size_t row = 0; row < VGA_HEIGHT; ++row) {
+        for (size_t column = 0; column < VGA_WIDTH; ++column) {
+            vga_buffer[row * VGA_WIDTH + column] = (uint16_t)(VGA_COLOR << 8) | ' ';
+        }
+    }
+
+    cursor_row = 0;
+    cursor_column = 0;
+}
 
 int putchar(int ic) {
     char character = (char)ic;

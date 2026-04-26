@@ -19,6 +19,7 @@ void isr14(void);
 void isr0_handler(void);
 void isr1_handler(void);
 void isr14_handler(void);
+int32_t isr_get_last_triggered_vector(void);
 
 #ifdef __cplusplus
 }
