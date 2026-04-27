@@ -15,6 +15,9 @@
 #include "../quicmusic/song.h"
 #include "../quicmusic/frequencies.h"
 
+#include "coroutine/coroutine.h"
+#include "coroutine/coroutine_scheduler.h"
+
 extern uint32_t end;
 
 
@@ -58,7 +61,38 @@ typedef struct{
     uint8_t e[6];
 } MyStruct; 
 
+void task_A(Coroutine* self) {
+    while (self->state != 3) { // While not TERMINATED
+        printf("Task A is running.\n");
+        sleep_interrupt(1000); // Sleep for 1000 ms
+        printf("Task A is yielding.\n");
+        self->pause(self); // Yield to the scheduler
+        
+        // When resuming
+        printf("Task A has been resumed\n");
+    }
+    self->terminate(self); // Terminate itself when done
+}
 
+void task_B() {
+        printf("Task B is running.\n");
+                sleep_interrupt(1000); // Sleep for 1000 ms
+        printf("Task B Starting coroutine A.\n");
+                sleep_interrupt(1000); // Sleep for 1000 ms
+        Coroutine* coA = create_corutine(task_A);
+        coA->init(coA, 0, NULL);
+        coA->run(coA); // Start coroutine A
+        printf("Coroutine A paused itself.\n");
+                sleep_interrupt(1000); // Sleep for 1000 ms
+        printf("Task B Resuming Task A.\n");
+                sleep_interrupt(1000); // Sleep for 1000 ms
+        coA->resume(coA); // Resume coroutine A
+        printf("Task A has been paused again.\n");
+        printf("Task B Terminating Task A.\n");
+        coA->terminate(coA); // Terminate coroutine A
+        free(coA->context); // Free the context of the coroutine
+        free(coA); // Free the coroutine after termination
+}
 
 int main(uint32_t myStruct, uint32_t magic, struct multiboot_info* mb_info_addr) {
 
@@ -85,7 +119,7 @@ int main(uint32_t myStruct, uint32_t magic, struct multiboot_info* mb_info_addr)
 
     print_memory_layout();
     sleep_interrupt(SCREEN_PAUSE_MS);
-    wait_for_user_next_screen();
+    /*wait_for_user_next_screen();
 
     printf("Hello World!\n");
     sleep_interrupt(SCREEN_PAUSE_MS);
@@ -150,7 +184,13 @@ int main(uint32_t myStruct, uint32_t magic, struct multiboot_info* mb_info_addr)
     //Free memory before exiting
     free(some_memory);
     free(memory2);
-    free(memory3);
+    free(memory3);*/
+
+    task_B();
+
+    wait_for_user_next_screen();
+
+    halt_forever();
 
     return 0;
 }

@@ -78,6 +78,8 @@ add_executable(uiaos-kernel
 	../quicmusic/frequencies.h
 	../quicmusic/song.c
 	../quicmusic/song.h
+	src/coroutine/coroutine.c
+	src/coroutine/coroutine.h
 )
 
 # Include directories for the kernel target
