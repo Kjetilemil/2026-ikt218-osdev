@@ -5,7 +5,7 @@
 #include <multiboot2.h>
 
 #include "vga.h"
-#include "../../gdt/gdt.h"
+#include "gdt.h"
 #include "isr.h"
 #include "irq.h"
 #include "kernel_memory.h"
@@ -13,9 +13,9 @@
 #include "libc/string.h"
 
 
-#include "../quicmusic/song.h"
-#include "../quicmusic/frequencies.h"
-#include "../include/piano.h"
+#include "song.h"
+#include "frequencies.h"
+#include "piano.h"
 
 extern uint32_t end;
 

@@ -63,22 +63,23 @@ add_executable(uiaos-kernel
 	src/multiboot2.asm # TODO: Add multiboot2 support
 	src/kernel.c
 	src/kernel.cpp
-	../gdt/gdt.c
-	../gdt/gdt.asm
+	src/gdt/gdt.c
+	src/gdt/gdt.asm
 	src/vga/vga.c
 	src/kernel_memory.c
 	src/pit.c
 	src/stdio.c
 	src/piano.c
-	../isr/isr.c
-	../isr/isr.asm
-	../irq/irq.c
-	../irq/irq.asm
-	../quicmusic/SoundPlayer.c
-	../quicmusic/SoundPlayer.h
-	../quicmusic/frequencies.h
-	../quicmusic/song.c
-	../quicmusic/song.h
+	src/isr/isr.c
+	src/isr/isr.asm
+	src/isr/isr.h
+	src/irq/irq.c
+	src/irq/irq.asm
+	src/quicmusic/SoundPlayer.c
+	src/quicmusic/SoundPlayer.h
+	src/quicmusic/frequencies.h
+	src/quicmusic/song.c
+	src/quicmusic/song.h
 )
 
 # Include directories for the kernel target
@@ -86,8 +87,8 @@ target_include_directories(uiaos-kernel PUBLIC
 	include
 	src/vga
 	src/gdt
-	${CMAKE_CURRENT_SOURCE_DIR}/../isr
-	${CMAKE_CURRENT_SOURCE_DIR}/../irq
+	src/isr
+	src/irq
 )
 
 

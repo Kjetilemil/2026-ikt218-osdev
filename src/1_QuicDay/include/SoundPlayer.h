@@ -1,4 +1,4 @@
-#ifdef SOUNDPLAYER_H
+#ifndef SOUNDPLAYER_H
 #define SOUNDPLAYER_H
 
 #include "libc/stdint.h"
